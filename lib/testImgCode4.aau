@@ -1,0 +1,120 @@
+	import console
+	import io
+	import fsys
+	import time
+	import zeromq
+	import thread
+
+..io.open()
+
+var i = 0
+
+import thread.table
+
+var ttab = thread.table("ttab")
+ttab.i = 0
+
+	recImgStr4Once = function(remoteIP, imgFile){
+		import thread.table
+		import console
+		import io
+		import fsys
+		import time
+		//..io.open()
+		var resultStr = ""
+		
+		..io.print("")
+		..io.print("")
+		
+		ttab = thread.table("ttab")
+		
+		
+		startTime = time.now()
+		startTime.format="%H%M%S";
+		..io.print("startOpenImg...", startTime)
+		
+		endTime = time.now()
+		endTime.format="%H%M%S";
+		
+		var imgFile = io.open(imgFile, "rb");
+		imgFile.seek("set")	// to set seek 0
+		var imgSize = imgFile.size(1) // get size n bytes use param 1
+		
+		var rawImg = ..raw.malloc(imgSize, 0)		// init rawMem 0
+		imgFile.readBuffer(rawImg, imgSize)		// set rawMew by file binary content 
+		imgFile.close()
+		
+		startTime = time.now()
+		startTime.format="%H%M%S";
+		..io.print("imgOpened...", startTime)
+		
+		import zeromq
+		
+		
+		startTime = time.now()
+		startTime.format="%H%M%S";
+		..io.print("StartOpenZeromq...", startTime)
+				
+		var context = zeromq.context(1) 
+		var requester = context.zmq_socket_request() ;
+		
+			
+		if( requester.connect( "tcp://"+remoteIP+":56666" ) ){
+    		..io.print("connect ok")
+		}
+		
+		var msg = zeromq.message(rawImg, imgSize)
+		
+		requester.sendMsg(msg)
+		msg.close();
+		
+		startTime = time.now()
+		startTime.format="%H%M%S";
+		..io.print("imgSended...", startTime)
+		..io.print("untilImgSendedCost", tonumber(startTime)-tonumber(endTime))
+		
+		endTime = time.now()
+		endTime.format="%H%M%S";
+		
+		var recvMsg = zeromq.message()  
+		requester.recvMsg(recvMsg);  
+		
+		resultStr =  recvMsg.getString() 	
+		io.print ("recvMsg", resultStr);
+		
+		startTime = time.now()
+		startTime.format="%H%M%S";
+		..io.print("imgReceived...", startTime, resultStr)
+		..io.print("untilImgReceivedCost", tonumber(startTime)-tonumber(endTime))
+		
+		..io.print("")
+		..io.print("")
+	
+		recvMsg.close()	
+		requester.close()
+		context.term();
+		
+		ttab.i = ttab.i - 1;
+	    return resultStr; 
+	
+	}
+	
+
+while(true){
+	import math
+	math.randomize()
+	var fileCnt = math.random(1, 55)
+	ttab.i   = ttab.i  + 1
+	thread.create(recImgStr4Once,"192.168.0.231", "D:\jppweb\imgall\"+fileCnt+".jpg")
+	//thread.create(recImgStr4Once,"127.0.0.1", "D:\jppweb\imgall\"+fileCnt+".jpg")
+	sleep(3000)
+	
+	while(ttab.i > 2){
+		sleep(3000)	
+	}
+}
+	
+
+	
+	//recImgStr4Once("192.168.0.231", "D:\jppweb\imgall\104037.jpg")
+	

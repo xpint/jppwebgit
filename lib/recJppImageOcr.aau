@@ -1,0 +1,79 @@
+
+
+	import com.picture
+	import tesseract	
+	import string
+
+namespace recJppImageOcr{
+
+
+	import com.picture
+	import tesseract	
+		import string
+
+	
+	var pixLastPrice;
+
+	
+	// 1. 初始化图片识别对象
+	var ocr = tesseract.ocr();
+	
+	if( 0 != ocr.init("price","/res" ) ){ //初始化样本语言包 
+		var prefix = win.getenv("TESSDATA_PREFIX");
+		if(!#prefix) prefix = "\lib\tesseract\.res\"
+		error("没有找到样本 " + prefix + "price.traineddata",2)
+	}
+	
+	//预设字符集可提升识别率，注意要一定在加载样本以后调用此函数
+	ocr.setVariable("tessedit_char_whitelist","1234567890");
+		
+	
+	
+	 //  获取  验证码 辅助 说明 图像识别结果
+	function getImgPrice(xTop, yTop, xBtom, yBtom){	
+		//import tesseract		
+		//xLog("@开始获取识别码")
+		//xTop, yTop = 0
+		//xBtom, yBtom = 0
+		
+    	// 把验证码截屏，保存成本地图片    925, 290    975   310
+		var picLastPrice = com.picture.snap(0, xTop,yTop, xBtom-xTop,yBtom-yTop);
+		picLastPrice.Save("/imgSbmPrice.jpg");		
+		
+		//获取图像像素数据
+		pixLastPrice = ..liblept.pixRead( ..io.fullpath("\imgSbmPrice.jpg") );	
+		ocr.setImage2( pixLastPrice );	
+		
+		//识别图像
+		if( 0 != ocr.recognize() ){
+			..io.print(1226,"识别图像出错");
+			return "";
+		}
+		var result = ocr.getText(); 	
+		
+		try{
+			num = tonumber(result)
+		}
+			catch(e){	
+		}
+		result = string.trim(result)
+		result = string.replace(result," ","")
+		//xLog("完成获取识别码："+result)
+		return  result; 
+	}
+
+/*
+	import console
+
+	var xCode = getImgPrice(660, 513, 703, 527)
+	..io.open()
+	..io.print(xCode)
+	console.print(xCode)
+	console.pause()
+	*/
+}
+
+
+
+
+

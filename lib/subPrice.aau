@@ -1,0 +1,55 @@
+
+namespace subPrice{
+	import thread.table;
+	import zeromq
+	
+	tab = thread.table("subPrice")
+	
+	tab.lastPrice = "1111"
+	tab.lastCmd = "cmdNull"
+	
+	getSubThredTable = function(){
+		return thread.table("subPrice")	
+	}
+	
+	context = zeromq.context(2) 
+	subClient = context.zmq_socket_sub()
+	
+	contextCmd = zeromq.context(1)
+	subClientCmd = contextCmd.zmq_socket_sub()
+	
+	init = function(svrip){
+		..io.print("svr", svrip)
+		filter := {byte value[] = "p"}
+		while (subClient.connect( "tcp://"+svrip+":55555" ) )
+		{
+			..io.print(22, "subClient.connect ok")
+			break
+		}
+		subClient.setsockopt(6, filter)	 // must  set 6
+			
+	}
+	 
+	initCmd = function(svrip){
+		..io.print("svrCmd", svrip)
+		filterCmd := {byte value[] = "c"}
+		while (subClientCmd.connect( "tcp://"+svrip+":59999" ) )
+		{
+			..io.print(38, "subClientCmd.connect ok")
+			break
+		}
+		subClientCmd.setsockopt(6, filterCmd)	 // must  set 6
+			
+	} 
+	 
+	getSubClient = function(){
+		return  subClient; 
+	}
+	
+	getSubClientCmd = function(){
+		return  subClientCmd; 
+	}
+
+}
+	
+

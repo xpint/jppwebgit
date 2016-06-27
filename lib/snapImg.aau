@@ -1,0 +1,218 @@
+
+namespace snapImg{
+	
+	
+	snapImgRectFromImgFile = function(oldImgFile, newImgFile,vtype){
+	
+		import gdip;
+		
+		
+		
+		var bitmap = gdip.bitmap( oldImgFile )
+
+    	var oldWidth = bitmap.width
+    	var oldHeight = bitmap.height
+    	
+    	var newWidth = oldWidth / 6 * 4
+    	var newHeight = oldHeight
+    	
+
+    	//snap 0 to  length
+    	if (vtype = "q"){   
+    		startWidth = 0
+    		endWidth =   newWidth
+    	}elseif(vtype = "h"){
+    		startWidth = oldWidth /6 * 2  //snap 1 to  length
+    		endWidth = newWidth
+    	}else if （vtype = "z"）{  //vtype = "h"
+  			startWidth = oldWidth /6 * 1 //snap 1 to length
+    		endWidth = newWidth
+    	}else { // 不处理
+    		startWidth = oldHeight //snap 1 to length
+    		endWidth = oldWidth	
+    	}
+    	
+   	
+		var bitmapNew = gdip.bitmap(newWidth,newHeight);
+		var graphics = bitmapNew.getGraphics();
+		//graphics.drawImageRectRect(bitmap,0,0,50,50,30,30,50,50)
+		//..io.open()
+		//..io.print(oldWidth, oldHeight,  startWidth, endWidth)
+		//..io.pause()
+		if （vtype != "n"）{
+			graphics.drawImageRectRect(bitmap,0,0,newWidth,newHeight, startWidth, 0, endWidth, oldHeight)
+		}else {
+			graphics.drawImageRectRect(bitmap,0,0,oldWidth,oldHeight, startWidth, 0, endWidth, oldHeight)
+		}
+		
+		//graphics.drawImageRectRect(bitmap,0,0,newWidth,newHeight, 35, 0, 69, oldHeight)
+		//graphics.drawImageRectRect(
+		bitmapNew.save(newImgFile)
+		
+		import time
+		nowTime = time.now()
+		nowTime.format="%H%M%S";
+		nowTimeStr = tostring(nowTime) 
+		
+		
+		bitmapNew.save("d:\jppweb\imgall\"+nowTimeStr+".jpg")
+		
+		bitmap.dispose()
+		bitmapNew.dispose()
+		
+	}
+	
+	
+	
+	conbineImgRectFromImgFile = function(ImgFile1, ImgFile2, ImgFileResult){
+	
+		import gdip;
+		
+		
+		
+		var bitmap1 = gdip.bitmap( ImgFile1 )
+		var bitmap2 = gdip.bitmap( ImgFile2 )
+
+    	var oldWidth1 = bitmap1.width
+    	var oldHeight1 = bitmap1.height
+    	
+    	var oldWidth2 = bitmap2.width
+    	var oldHeight2 = bitmap2.height
+    	
+    	var newWidth = 0
+    	var newHeight = 0
+    	
+    	if (oldWidth1 > oldWidth2) {
+    		newWidth = oldWidth1 	
+    	}
+		else
+		{
+			newWidth = oldWidth2
+		}
+		
+		
+		newHeight = oldHeight1 + oldHeight2
+
+		var bitmapNew = gdip.bitmap(newWidth,newHeight);
+		var graphics = bitmapNew.getGraphics();
+		//bitmapNew
+		//graphics.drawImageRectRect(bitmap,0,0,50,50,30,30,50,50)
+		//..io.open()
+		//..io.print(oldWidth, oldHeight,  startWidth, endWidth)
+		//..io.pause()
+		graphics.drawImageRectRect(bitmap1,0,0,	newWidth,oldHeight1, 	        0, 0, oldWidth1, oldHeight1)
+		graphics.drawImageRectRect(bitmap2,0,oldHeight1, newWidth,oldHeight2, 	0, 0, oldWidth2, oldHeight2)
+		
+		
+		
+		//graphics.drawImageRectRect(bitmap,0,0,newWidth,newHeight, 35, 0, 69, oldHeight)
+		//graphics.drawImageRectRect(
+		bitmapNew.save(ImgFileResult)
+		
+		import time
+		nowTime = time.now()
+		nowTime.format="%H%M%S";
+		nowTimeStr = tostring(nowTime) 
+		
+		
+		bitmapNew.save("d:\jppweb\imgall\"+nowTimeStr+".jpg")
+		
+		bitmap1.dispose()
+		bitmap2.dispose()
+		bitmapNew.dispose()
+		
+	}
+	
+	//conbineImgRectFromImgFile("d:\jppweb\imgcode4.jpg",	"d:\jppweb\imgcode6.jpg", "d:\jppweb\imgcode4_6.jpg")	
+	//conbineImgRectFromImgFile("d:\jppweb\imgcode4_6.jpg",	"d:\jppweb\imgsbm.jpg", "d:\jppweb\imgcode_all.jpg")
+	
+	snapFullScreen = function(){
+		import time
+		var	nowTime = time.now()
+		nowTime.format="%Y年%m月%d日 %H时%M分%S秒";
+		
+		nowTime.format="%Y%m%d-%H%M%S";
+		
+		var nowTimeStr = tostring(nowTime)
+		
+		import com.picture 
+		
+		//var fullScreenPic = com.picture.snap(0, xImgTopBtn,yImgTopBtn , xImgBtomBtn-xImgTopBtn,yImgBtomBtn-yImgTopBtn);
+		var fullScreenPic = com.picture.snap()
+		
+		import fsys
+		import io
+		
+		if (not io.exist("D:\jppweb\snap\"))
+		{
+			fsys.createDir("D:\jppweb\snap\")
+		}
+
+		fullScreenPic.Save("D:\jppweb\snap\"+nowTimeStr+".jpg");
+		
+	}
+	
+	import fsys
+	import io
+	
+	if (not io.exist("D:\jppweb\recImgResult\"))
+	{
+		fsys.createDir("D:\jppweb\recImgResult\")
+	}
+	
+	copyFile =  function(oldFile, newImgFile){
+		import time
+		var	nowTime = time.now()
+		nowTime.format="%Y年%m月%d日 %H时%M分%S秒";
+		
+		nowTime.format="%Y%m%d-%H%M%S";
+		
+		var nowTimeStr = tostring(nowTime)
+
+		
+		import fsys
+		import io
+		
+		if (not io.exist("D:\jppweb\recImgResult\"))
+		{
+			fsys.createDir("D:\jppweb\recImgResult\")
+		}
+		
+		fsys.copy("d:\jppweb\imgcode4.jpg","D:\jppweb\recImgResult\"+nowTimeStr+newImgFile+".jpg")
+
+	}
+	
+	
+	bakImgFile =  function(oldFile){
+		import time
+		var	nowTime = time.now()
+		nowTime.format="%Y年%m月%d日 %H时%M分%S秒";
+		
+		nowTime.format="%Y%m%d-%H%M%S";
+		
+		var nowTimeStr = tostring(nowTime)
+
+		
+		import fsys
+		import io
+		
+		if (not io.exist("D:\jppweb\recImgResult\"))
+		{
+			fsys.createDir("D:\jppweb\recImgResult\")
+		}
+		
+		fsys.copy("d:\jppweb\"+oldFile,"D:\jppweb\recImgResult\"+nowTimeStr+oldFile)
+
+	}
+	
+	//snapFullScreen()
+	
+	//{demo
+	//snapImgRectFromImgFile("D:\jppweb\imgcode6.jpg", "D:\jppweb\imgcode4.jpg", "q")
+	
+	
+		
+	//import process;
+	//process.explore_select( "D:\jppweb\imgcode4.jpg")
+	//}deom end
+}
